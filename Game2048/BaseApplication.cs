@@ -6,7 +6,7 @@ namespace _2048GameConsole;
 
 public abstract class BaseApplication
 {
-    private const int BOARD_SIZE = 3;
+    private const int BOARD_SIZE = 4;
 
     protected Model _game;
     protected InputManager _inputManager;
