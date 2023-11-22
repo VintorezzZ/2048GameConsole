@@ -7,7 +7,7 @@ public enum EScreenType
 
 public interface IScreenManager<TScreenType> where TScreenType : struct, Enum
 {
-    Dictionary<TScreenType, BaseScreen<TScreenType>> Screens { get; set; }
+    Dictionary<TScreenType, IScreen> Screens { get; set; }
 
     void Update();
     void ShowScreen(TScreenType type);

@@ -9,13 +9,13 @@ public class ConsoleScreenManager : IScreenManager<EScreenType>
     private static ConsoleScreenManager _instance;
     public static ConsoleScreenManager Instance => _instance;
 
-    private Dictionary<EScreenType, BaseScreen<EScreenType>> _screens => ((IScreenManager<EScreenType>) this).Screens;
-    Dictionary<EScreenType, BaseScreen<EScreenType>> IScreenManager<EScreenType>.Screens { get; set; } = new();
+    private Dictionary<EScreenType, IScreen> _screens => ((IScreenManager<EScreenType>) this).Screens;
+    Dictionary<EScreenType, IScreen> IScreenManager<EScreenType>.Screens { get; set; } = new();
     
     private readonly BaseScreen<EScreenType> _gameFieldScreen;
     private readonly ConfirmationWindow _confirmationWindow;
 
-    private BaseScreen<EScreenType> _currentScreen;
+    private IScreen _currentScreen;
     private readonly List<IScreen> _openedWindows = new();
     
     public ConsoleScreenManager(UIInputRoot uiInputRoot, IModelReader game, IGameFieldViewUpdater gameFieldViewUpdater)
