@@ -11,6 +11,4 @@ public interface IScreenManager<TScreenType> where TScreenType : struct, Enum
 
     void Update();
     void ShowScreen(TScreenType type);
-    void CloseCurrentScreen();
-    void CloseAll();
 }

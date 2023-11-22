@@ -4,75 +4,42 @@ using Game2048.Ui;
 
 namespace _2048GameConsole.Ui;
 
-public class ConsoleScreenManager : IScreenManager<EScreenType>
+public class ConsoleScreenManager : BaseScreenManager<EScreenType>
 {
-    private static ConsoleScreenManager _instance;
-    public static ConsoleScreenManager Instance => _instance;
+    public static ConsoleScreenManager Instance { get; private set; }
 
-    private Dictionary<EScreenType, IScreen> _screens => ((IScreenManager<EScreenType>) this).Screens;
-    Dictionary<EScreenType, IScreen> IScreenManager<EScreenType>.Screens { get; set; } = new();
-    
     private readonly BaseScreen<EScreenType> _gameFieldScreen;
     private readonly ConfirmationWindow _confirmationWindow;
-
-    private IScreen _currentScreen;
-    private readonly List<IScreen> _openedWindows = new();
     
     public ConsoleScreenManager(UIInputRoot uiInputRoot, IModelReader game, IGameFieldViewUpdater gameFieldViewUpdater)
     {
-        _instance = this;
+        Instance = this;
         
         _gameFieldScreen = new GameFieldScreen(gameFieldViewUpdater, game);
         _confirmationWindow = new ConfirmationWindow();
         
-        _screens.Add(_gameFieldScreen.ScreenType, _gameFieldScreen);
+        Screens.Add(_gameFieldScreen.ScreenType, _gameFieldScreen);
         
         uiInputRoot.Add(_gameFieldScreen);
         uiInputRoot.Add(_confirmationWindow);
+        
+        game.OnGameStarted += () =>
+        {
+            CloseAll();
+            ShowScreen(EScreenType.GameField);
+        };
     }
     
-    public void Update()
-    {
-        _currentScreen.Update();
-
-        foreach (var window in _openedWindows)
-            window.Update();
-    }
-
-    public void ShowScreen(EScreenType type)
-    {
-        CloseCurrentScreen();
-
-        if (_screens.TryGetValue(type, out var screen))
-        {
-            _currentScreen = screen;
-            _currentScreen.Show();
-        }
-    }
-
     public void ShowConfirmationWindow(string title, Action callback)
     {
         _openedWindows.Add(_confirmationWindow);
         _confirmationWindow.Show(title, callback);
         _confirmationWindow.OnClose += () => RemoveWindowFromOpenList(_confirmationWindow);
     }
-
-    private void RemoveWindowFromOpenList(IScreen window)
+    
+    protected override void CloseAll()
     {
-        if (_openedWindows.Contains(window))
-            _openedWindows.Remove(window);
-    }
-
-    public void CloseCurrentScreen()
-    {
-        _currentScreen?.Close();
-        _currentScreen = null;
-    }
-
-    public void CloseAll()
-    {
-        _gameFieldScreen.Close();
         _confirmationWindow.Close();
-        _currentScreen = null;
+        base.CloseAll();
     }
 }
