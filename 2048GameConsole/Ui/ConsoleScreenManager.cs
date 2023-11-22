@@ -8,7 +8,7 @@ public class ConsoleScreenManager : BaseScreenManager<EScreenType>
 {
     public static ConsoleScreenManager Instance { get; private set; }
 
-    private readonly BaseScreen<EScreenType> _gameFieldScreen;
+    private readonly GameFieldScreen _gameFieldScreen;
     private readonly ConfirmationWindow _confirmationWindow;
     
     public ConsoleScreenManager(UIInputRoot uiInputRoot, IModelReader game, IGameFieldViewUpdater gameFieldViewUpdater)
