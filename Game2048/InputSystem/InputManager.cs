@@ -6,9 +6,8 @@ public class InputManager
 {
     public TranslateDelegate TranslateDelegate;
 
-    private IInputSource _inputSource;
-    private List<ECommand> _commandsList = new();
-    private bool _haveNewInput;
+    private readonly IInputSource _inputSource;
+    private readonly List<ECommand> _commandsList = new();
 
     public InputManager(IInputSource inputSource)
     {
@@ -23,9 +22,6 @@ public class InputManager
     
     private void DispatchInput(List<ECommand> commandsList)
     {
-        if (TranslateDelegate == null)
-            return;
-
-        TranslateDelegate(commandsList);
+        TranslateDelegate?.Invoke(commandsList);
     }
 }
