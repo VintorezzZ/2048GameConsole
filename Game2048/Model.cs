@@ -24,7 +24,7 @@ public class Model : InputNode, IModelReader
         Down
     }
 
-    private const int FINISH_VALUE = 32;
+    private const int FINISH_VALUE = 2048;
 
     private List<(int, int)> _emptyGridCells;
     private bool _gridChanged;
