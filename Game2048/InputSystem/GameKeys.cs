@@ -8,7 +8,8 @@ public enum ECommand
     MoveDown,
     Restart,
     Exit,
-    Confirm
+    Confirm,
+    Discard,
 }
 
 public static class ECommandExtension

@@ -27,6 +27,8 @@ public class GameFieldScreen : BaseScreen<EScreenType>
     public override void Update()
     {
         Console.Clear();
+        Console.WriteLine($"Arrows - move grid \nR - restart \nQ - exit");
+        Console.WriteLine();
         Console.WriteLine($"Score: {_game.Score}    BestScore {_game.BestScore}");
         Console.WriteLine();
         _gameFieldViewUpdater.Update();
@@ -42,16 +44,16 @@ public class GameFieldScreen : BaseScreen<EScreenType>
     {
         if (command.Is(ECommand.Restart))
         {
-            ConsoleScreenManager.Instance.ShowConfirmationWindow("Restart game?", EventHub.RequestGameRestart);
+            ConsoleScreenManager.Instance.ShowConfirmationWindow("Restart game? Y/N", EventHub.RequestGameRestart);
             return ETranslateResult.Block;
         }
 
         if (command.Is(ECommand.Exit))
         {
-            ConsoleScreenManager.Instance.ShowConfirmationWindow("Quit game?", () => Environment.Exit(0));
+            ConsoleScreenManager.Instance.ShowConfirmationWindow("Quit game? Y/N", () => Environment.Exit(0));
             return ETranslateResult.Block;
         }
 
-        return ETranslateResult.Ignore;
+        return _game.IsGameOvered ? ETranslateResult.Block : ETranslateResult.Ignore;
     }
 }

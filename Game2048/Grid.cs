@@ -2,8 +2,8 @@
 
 public interface IGridReader<out TGridObject> : IGridChangeListener
 {
-    int Width { get; }
-    int Height { get; }
+    int Raws { get; }
+    int Columns { get; }
     int Lenght { get; }
     
     TGridObject this [int x, int y] { get; }
@@ -27,12 +27,12 @@ public class OnGridObjectChangedEventArgs : EventArgs
 
 public class Grid<TGridObject> : IGridReader<TGridObject>, IGridWriter<TGridObject>
 {
-    private readonly int _width;
-    private readonly int _height;
+    private readonly int _raws;
+    private readonly int _columns;
     private TGridObject[,] _gridArray;
 
-    public int Width => _width;
-    public int Height => _height;
+    public int Raws => _raws;
+    public int Columns => _columns;
     public int Lenght => _gridArray.Length;
     
     public event EventHandler<OnGridObjectChangedEventArgs>? OnGridObjectChanged;
@@ -43,21 +43,21 @@ public class Grid<TGridObject> : IGridReader<TGridObject>, IGridWriter<TGridObje
         set => SetGridObject(x, y, value);
     }
     
-    public Grid(int width, int height, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject)
+    public Grid(int columns, int raws, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject)
     {
-        _width = width;
-        _height = height;
-        
+        _columns = columns;
+        _raws = raws;
+
         CreateGridNodes(createGridObject);
     }
 
     private void CreateGridNodes(Func<Grid<TGridObject>, int, int, TGridObject> createGridObject)
     {
-        _gridArray = new TGridObject[_width, _height];
+        _gridArray = new TGridObject[_columns, _raws];
 
-        for (int x = 0; x < _width; x++)
+        for (int x = 0; x < _columns; x++)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < _raws; y++)
                 _gridArray[x, y] = createGridObject(this, x, y);
         }
     }
@@ -78,6 +78,6 @@ public class Grid<TGridObject> : IGridReader<TGridObject>, IGridWriter<TGridObje
     
     public bool AreCoordsMatchesTheGrid(int x, int y)
     {
-        return x >= 0 && y >= 0 && x < _width && y < _height;
+        return x >= 0 && y >= 0 && x < _columns && y < _raws;
     }
 }

@@ -4,11 +4,6 @@ using Game2048.Ui;
 
 namespace _2048GameConsole.Ui;
 
-public enum EScreenType
-{
-    GameField,
-}
-
 public class ConsoleScreenManager : IScreenManager<EScreenType>
 {
     private static ConsoleScreenManager _instance;

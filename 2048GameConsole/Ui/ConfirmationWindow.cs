@@ -30,7 +30,7 @@ public class ConfirmationWindow : BaseWindow
             _callback?.Invoke();
             Close();
         }
-        else if (command.Is(ECommand.Exit))
+        else if (command.Is(ECommand.Discard))
         {
             Close();
         }

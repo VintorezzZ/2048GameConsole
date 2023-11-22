@@ -31,6 +31,9 @@ public class ConsoleInputSource : IInputSource
             case ConsoleKey.Y:
                 commands.Add(ECommand.Confirm);
                 break;
+            case ConsoleKey.N:
+                commands.Add(ECommand.Discard);
+                break;
         }
     }
 }

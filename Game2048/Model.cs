@@ -24,8 +24,9 @@ public class Model : InputNode, IModelReader
         Down
     }
 
+    private const int FINISH_VALUE = 32;
+
     private List<(int, int)> _emptyGridCells;
-    private int _gridSize;
     private bool _gridChanged;
     private readonly Random _random = new();
 
@@ -42,8 +43,7 @@ public class Model : InputNode, IModelReader
     public void Init(int gridSize)
     {
         Enabled = true;
-        _gridSize = gridSize;
-        Grid = new Grid<int>(_gridSize, _gridSize, (_, _, _) => 0);
+        Grid = new Grid<int>(gridSize, gridSize, (_, _, _) => 0);
         _emptyGridCells = new List<(int, int)>(Grid.Lenght);
 
         EventHub.OnGameRestartRequest += Start;
@@ -51,10 +51,10 @@ public class Model : InputNode, IModelReader
 
     public void Start()
     {
-        for (int i = 0; i < Grid.Width; i++)
+        for (int row = 0; row < Grid.Raws; row++)
         {
-            for (int j = 0; j < Grid.Height; j++)
-                Grid[i, j] = 0;
+            for (int col = 0; col < Grid.Columns; col++)
+                Grid[col, row] = 0;
         }
 
         Score = 0;
@@ -78,7 +78,7 @@ public class Model : InputNode, IModelReader
 
         OnGridObjectChanged?.Invoke(data.X, data.Y, Grid[data.X, data.Y]);
 
-        if (Grid[data.X, data.Y] != 2048)
+        if (Grid[data.X, data.Y] != FINISH_VALUE)
             return;
         
         IsGameOvered = true;
@@ -102,23 +102,23 @@ public class Model : InputNode, IModelReader
     {
         _emptyGridCells.Clear();
 
-        for (int i = 0; i < Grid.Width; i++)
+        for (int row = 0; row < Grid.Raws; row++)
         {
-            for (int j = 0; j < Grid.Height; j++)
+            for (int col = 0; col < Grid.Columns; col++)
             {
-                if (Grid[i, j] == 0)
-                    _emptyGridCells.Add((i, j));
+                if (Grid[col, row] == 0)
+                    _emptyGridCells.Add((col, row));
             }
         }
     }
     
     private bool HasEmptyCell()
     {
-        for (int row = 0; row < Grid.Width; row++)
+        for (int row = 0; row < Grid.Raws; row++)
         {
-            for (int col = 0; col < Grid.Height; col++)
+            for (int col = 0; col < Grid.Columns; col++)
             {
-                if (Grid[row, col] == 0)
+                if (Grid[col, row] == 0)
                     return true;
             }
         }
@@ -141,12 +141,6 @@ public class Model : InputNode, IModelReader
                 break;
             case ECommand.MoveDown:
                 Move(EMoveDirection.Down);
-                break;
-            case ECommand.Restart:
-                Start();
-                break;
-            case ECommand.Exit:
-                return ETranslateResult.Ignore;
                 break;
         }
 
@@ -188,19 +182,19 @@ public class Model : InputNode, IModelReader
 
     private bool CanMergeAnyCells()
     {
-        for (int row = 0; row < Grid.Width; row++)
+        for (int row = 0; row < Grid.Raws; row++)
         {
-            for (int col = 0; col < Grid.Height; col++)
+            for (int col = 0; col < Grid.Columns; col++)
             {
-                if (Grid[row, col] == 0)
+                if (Grid[col, row] == 0)
                     continue;
                 
                 // Проверяем ячейку справа
-                if (col < Grid.Width - 1 && Grid[row, col] == Grid[row, col + 1])
+                if (col < Grid.Columns - 1 && Grid[col, row] == Grid[col + 1, row])
                     return true;
 
                 // Проверяем ячейку снизу
-                if (row < Grid.Height - 1 && Grid[row, col] == Grid[row + 1, col])
+                if (row < Grid.Raws - 1 && Grid[col, row] == Grid[col, row + 1])
                     return true;
             }
         }
@@ -211,10 +205,10 @@ public class Model : InputNode, IModelReader
     
     private int FindEmptyCell(int currentRow, int currentCol, int targetCol)
     {
-        if (!Grid.AreCoordsMatchesTheGrid(currentRow, targetCol))
+        if (!Grid.AreCoordsMatchesTheGrid(targetCol, currentRow))
             return currentCol;
 
-        if (Grid[currentRow, targetCol] != 0)
+        if (Grid[targetCol, currentRow] != 0)
             return currentCol;
 
         return FindEmptyCell(currentRow, currentCol - 1, targetCol - 1);
@@ -238,11 +232,11 @@ public class Model : InputNode, IModelReader
     
     private void MoveLeft()
     {
-        for (int row = 0; row < Grid.Width; row++)
+        for (int row = 0; row < Grid.Raws; row++)
         {
-            for (int col = 0; col < Grid.Height; col++)
+            for (int col = 0; col < Grid.Columns; col++)
             {
-                if (Grid[row, col] == 0)
+                if (Grid[col, row] == 0)
                     continue;
 
                 var targetCol = MoveCell(row, col);
@@ -255,13 +249,13 @@ public class Model : InputNode, IModelReader
     {
         var resultingCell = targetCol - 1;
         
-        if (Grid.AreCoordsMatchesTheGrid(row, resultingCell))
+        if (Grid.AreCoordsMatchesTheGrid(resultingCell, row))
         {
-            if (Grid[row, resultingCell] == Grid[row, targetCol])
+            if (Grid[resultingCell, row] == Grid[targetCol, row])
             {
-                var newValue = Grid[row, resultingCell] * 2;
-                Grid[row, resultingCell] = newValue;
-                Grid[row, targetCol] = 0;
+                var newValue = Grid[resultingCell, row] * 2;
+                Grid[resultingCell, row] = newValue;
+                Grid[targetCol, row] = 0;
                 
                 UpdateScore(newValue);
             }
@@ -275,8 +269,8 @@ public class Model : InputNode, IModelReader
         if (targetCol == col)
             return targetCol;
         
-        Grid[row, targetCol] = Grid[row, col];
-        Grid[row, col] = 0;
+        Grid[targetCol, row] = Grid[col, row];
+        Grid[col, row] = 0;
         
         return targetCol;
     }
@@ -305,11 +299,11 @@ public class Model : InputNode, IModelReader
     // Транспонирование матрицы
     private void Transpose()
     {
-        for (int row = 0; row < Grid.Width; row++)
+        for (int row = 0; row < Grid.Raws; row++)
         {
-            for (int col = row; col < Grid.Height; col++)
+            for (int col = row; col < Grid.Columns; col++)
             {
-                (Grid[row, col], Grid[col, row]) = (Grid[col, row], Grid[row, col]);
+                (Grid[col, row], Grid[row, col]) = (Grid[row, col], Grid[col, row]);
 
                 // int temp = _grid[row, col];
                 // _grid[row, col] = _grid[col, row];
@@ -321,13 +315,11 @@ public class Model : InputNode, IModelReader
     // Инвертирование строки игрового поля
     private void ReverseRow()
     {
-        int size = Grid.Width;
-
-        for (int row = 0; row < size; row++)
+        for (int row = 0; row < Grid.Raws; row++)
         {
-            for (int col = 0; col < size / 2; col++)
+            for (int col = 0; col < Grid.Columns / 2; col++)
             {
-                (Grid[row, col], Grid[row, size - col - 1]) = (Grid[row, size - col - 1], Grid[row, col]);
+                (Grid[col, row], Grid[Grid.Columns - col - 1, row]) = (Grid[Grid.Columns - col - 1, row], Grid[col, row]);
 
                 // int temp = _grid[row, col];
                 // _grid[row, col] = _grid[row, size - col - 1];
