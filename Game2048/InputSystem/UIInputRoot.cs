@@ -1,8 +1,8 @@
 ﻿namespace Game2048.InputSystem;
 
-public class UIInputRoot : InputNode
+public class UiInputRoot : InputNode
 {
-    public UIInputRoot()
+    public UiInputRoot()
     {
         Enabled = true;
     }

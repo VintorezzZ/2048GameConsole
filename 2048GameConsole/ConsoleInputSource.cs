@@ -1,4 +1,6 @@
-namespace Game2048.InputSystem;
+using Game2048.InputSystem;
+
+namespace _2048GameConsole;
 
 public class ConsoleInputSource : IInputSource
 {

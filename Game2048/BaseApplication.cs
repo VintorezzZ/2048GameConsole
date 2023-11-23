@@ -1,8 +1,7 @@
-﻿using Game2048;
-using Game2048.InputSystem;
+﻿using Game2048.InputSystem;
 using Game2048.Ui;
 
-namespace _2048GameConsole;
+namespace Game2048;
 
 public abstract class BaseApplication
 {
@@ -10,7 +9,7 @@ public abstract class BaseApplication
 
     protected Model _game;
     protected InputManager _inputManager;
-    protected UIInputRoot _uiInputRoot;
+    protected UiInputRoot _uiInputRoot;
     protected InputTree _inputTree;
     protected IScreenManager<EScreenType> _screenManager;
 
@@ -38,7 +37,7 @@ public abstract class BaseApplication
     private void CreateInputModule()
     {
         _inputManager = new InputManager(CreateInputSource());
-        _uiInputRoot = new UIInputRoot();
+        _uiInputRoot = new UiInputRoot();
         _inputTree = new InputTree(_inputManager);
         _inputTree.Add(_game);
         _inputTree.Add(_uiInputRoot);

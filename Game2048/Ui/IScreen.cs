@@ -1,4 +1,4 @@
-﻿namespace Game2048;
+﻿namespace Game2048.Ui;
 
 public interface IScreen
 {

@@ -2,7 +2,7 @@
 
 public abstract class InputNode : InputNodeAbstract
 {
-    public enum ETranslateResult
+    protected enum ETranslateResult
     {
         Ignore,
         Block,

@@ -11,7 +11,7 @@ public class ConsoleScreenManager : BaseScreenManager<EScreenType>
     private readonly GameFieldScreen _gameFieldScreen;
     private readonly ConfirmationWindow _confirmationWindow;
     
-    public ConsoleScreenManager(UIInputRoot uiInputRoot, IModelReader game, IGameFieldViewUpdater gameFieldViewUpdater)
+    public ConsoleScreenManager(UiInputRoot uiInputRoot, IModelReader game, IGameFieldViewUpdater gameFieldViewUpdater)
     {
         Instance = this;
         
