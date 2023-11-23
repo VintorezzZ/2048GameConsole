@@ -1,4 +1,5 @@
 using Game2048;
+using Game2048.GameModel;
 using Game2048.InputSystem;
 using Game2048.Ui;
 
