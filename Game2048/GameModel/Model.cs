@@ -3,7 +3,7 @@ using Game2048.InputSystem;
 
 namespace Game2048.GameModel;
 
-public class Model : InputNode, IModelReader
+public class Model : InputNode, IModelReadonly
 {
     private const int FINISH_VALUE = 2048;
 

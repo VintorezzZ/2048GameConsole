@@ -1,6 +1,6 @@
 ﻿namespace Game2048.GameModel;
 
-public interface IModelReader
+public interface IModelReadonly
 {
     event Action OnGameStarted;
     event Action OnGameOvered;

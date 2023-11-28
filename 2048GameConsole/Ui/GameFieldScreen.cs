@@ -7,12 +7,12 @@ namespace _2048GameConsole.Ui;
 
 public class GameFieldScreen : BaseScreen<EScreenType>
 {
-    private readonly IModelReader _game;
+    private readonly IModelReadonly _game;
     private readonly IGameFieldViewUpdater _gameFieldViewUpdater;
     
     public override EScreenType ScreenType => EScreenType.GameField;
 
-    public GameFieldScreen(IGameFieldViewUpdater gameFieldViewUpdater, IModelReader game)
+    public GameFieldScreen(IGameFieldViewUpdater gameFieldViewUpdater, IModelReadonly game)
     {
         _gameFieldViewUpdater = gameFieldViewUpdater;
         _game = game;
