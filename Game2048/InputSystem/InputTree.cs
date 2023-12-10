@@ -10,7 +10,9 @@ public sealed class InputTree : InputNodeAbstract
         _inputManager.TranslateDelegate = TranslateInput;
     }
 
-    public void Add(InputNode node)
+    public void Add(InputNode node) //interface // better naming of InoutNode, cuz it means that it is InputHandler // input system is not расширяемая
+        // проникла во все части программы. нужно сделать ее обособленной, самостоятельной.
+        // избавиться от наследования класса InputNode и сделать его интерфейсом, через которого можно абстрактно работать 
     {
         _children.Add(node);
     }
