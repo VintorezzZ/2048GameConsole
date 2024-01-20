@@ -3,10 +3,13 @@ using Game2048.InputSystem;
 
 namespace Game2048.GameModel;
 
-public class Model : InputNode, IModelReadonly
+public class Model : IModelReadonly, IInputHandler
 {
     private const int FINISH_VALUE = 2048;
 
+    public bool InputEnabled { get; private set; }
+    List<IInputHandler> IInputHandler.InputChildren { get; } = new();
+    
     private IGridMover<int> _gridMover;
     private List<(int, int)> _emptyGridCells;
     private bool _gridChanged;
@@ -24,7 +27,7 @@ public class Model : InputNode, IModelReadonly
     
     public void Init(int gridSize)
     {
-        Enabled = true;
+        InputEnabled = true;
         Grid = new Grid<int>(gridSize, gridSize, (_, _, _) => 0);
         _emptyGridCells = new List<(int, int)>(Grid.Lenght);
         
@@ -112,28 +115,7 @@ public class Model : InputNode, IModelReadonly
 
         return false;
     }
-
-    protected override ETranslateResult TranslateCommand(ECommand command)
-    {
-        switch (command)
-        {
-            case ECommand.MoveLeft:
-                Move(EMoveDirection.Left);
-                break;
-            case ECommand.MoveRight:
-                Move(EMoveDirection.Right);
-                break;
-            case ECommand.MoveUp:
-                Move(EMoveDirection.Up);
-                break;
-            case ECommand.MoveDown:
-                Move(EMoveDirection.Down);
-                break;
-        }
-
-        return ETranslateResult.BlockAll;
-    }
-
+    
     private void Move(EMoveDirection direction)
     {
         _gridMover.Move(direction);
@@ -181,5 +163,26 @@ public class Model : InputNode, IModelReadonly
                 
         if (Score > BestScore)
             BestScore = Score;
+    }
+    
+    ETranslateResult IInputHandler.TranslateCommand(ECommand command)
+    {
+        switch (command)
+        {
+            case ECommand.MoveLeft:
+                Move(EMoveDirection.Left);
+                break;
+            case ECommand.MoveRight:
+                Move(EMoveDirection.Right);
+                break;
+            case ECommand.MoveUp:
+                Move(EMoveDirection.Up);
+                break;
+            case ECommand.MoveDown:
+                Move(EMoveDirection.Down);
+                break;
+        }
+
+        return ETranslateResult.BlockAll;
     }
 }

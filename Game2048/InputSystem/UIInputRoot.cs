@@ -1,18 +1,16 @@
 ﻿namespace Game2048.InputSystem;
 
-public class UiInputRoot : InputNode
+public class UiInputRoot : IInputHandler
 {
-    public UiInputRoot()
+    public bool InputEnabled => true;
+    List<IInputHandler> IInputHandler.InputChildren { get; } = new();
+
+    public void Add(IInputHandler handler)
     {
-        Enabled = true;
-    }
-    
-    public void Add(InputNode node)
-    {
-        _children.Add(node);
+        ((IInputHandler) this).InputChildren.Add(handler);
     }
 
-    protected override ETranslateResult TranslateCommand(ECommand command)
+    ETranslateResult IInputHandler.TranslateCommand(ECommand command)
     {
         return ETranslateResult.Ignore;
     }

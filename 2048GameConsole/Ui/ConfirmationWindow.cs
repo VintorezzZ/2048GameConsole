@@ -3,15 +3,18 @@ using Game2048.Ui;
 
 namespace _2048GameConsole.Ui;
 
-public class ConfirmationWindow : BaseWindow
+public class ConfirmationWindow : BaseWindow, IInputHandler
 {
+    public bool InputEnabled { get; private set; }
+    List<IInputHandler> IInputHandler.InputChildren { get; } = new();
+    
     private string _titleText;
     private Action _callback;
     
     public void Show(string titleText, Action callback)
     {
         base.Show();
-
+        InputEnabled = true;
         _titleText = titleText;
         _callback = callback;
     }
@@ -21,8 +24,8 @@ public class ConfirmationWindow : BaseWindow
         Console.WriteLine();    
         Console.WriteLine(_titleText);    
     }
-
-    protected override ETranslateResult TranslateCommand(ECommand command)
+    
+    ETranslateResult IInputHandler.TranslateCommand(ECommand command)
     {
         if (command.Is(ECommand.Confirm))
         {
@@ -41,6 +44,7 @@ public class ConfirmationWindow : BaseWindow
     {
         base.Close();
 
+        InputEnabled = false;
         _callback = null;
         
         if (string.IsNullOrEmpty(_titleText))

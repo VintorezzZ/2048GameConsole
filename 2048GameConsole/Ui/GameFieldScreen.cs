@@ -5,8 +5,11 @@ using Game2048.Ui;
 
 namespace _2048GameConsole.Ui;
 
-public class GameFieldScreen : BaseScreen<EScreenType>
+public class GameFieldScreen : BaseScreen<EScreenType>, IInputHandler
 {
+    public bool InputEnabled { get; private set; }
+    public List<IInputHandler> InputChildren { get; } = new();
+    
     private readonly IModelReadonly _game;
     private readonly IGameFieldViewUpdater _gameFieldViewUpdater;
     
@@ -21,7 +24,7 @@ public class GameFieldScreen : BaseScreen<EScreenType>
     public override void Show()
     {
         base.Show();
-        
+        InputEnabled = true;
         Update();
     }
 
@@ -40,8 +43,14 @@ public class GameFieldScreen : BaseScreen<EScreenType>
             Console.WriteLine(_game.GameWon ? "Congratulations, you won the game!" : "Game overed!");
         }
     }
+
+    public override void Close()
+    {
+        InputEnabled = false;
+        base.Close();
+    }
     
-    protected override ETranslateResult TranslateCommand(ECommand command)
+    ETranslateResult IInputHandler.TranslateCommand(ECommand command)
     {
         if (command.Is(ECommand.Restart))
         {
